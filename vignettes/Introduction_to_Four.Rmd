@@ -14,18 +14,49 @@ vignette: >
 
 # Overview
 
-The `Four` package provides a linear regression function `linreg` for performing multiple regression models. The package also implements several methods for `linreg` objects, such as `print()`, `summary()`, and `plot()`. This document will introduce how to use the package and show how to apply these methods on the `iris` dataset.
+In this package, we create a package to handle linear regression models. 
 
-# Install and Load Packages
+We use the QR decomposition to create the most basic functionality in the R package and implement the results as an S3 class.
 
-First, make sure you have the package installed and loaded:
+We also implement an object oriented system to handle special functions such as print(), plot(), resid(), pred(), coef() and summary().
 
-```r
-# Uncomment the line below to install the package if you haven't done so
-# devtools::install_github("Quanlin222/R_Group_3/Four")
+## Installing and Loading the Package
+
+devtools::install_github("Quanlin222/Four")
+
+
 library(Four)
 
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+## Load data
+
+data(iris)
+
+lin_obj <- linreg(Petal.Length ~ Sepal.Width + Sepal.Length, data = iris)
+
+## Perform linear regression
+
+### Print out the coefficients and coefficient names
+
+print(lin_obj)
+
+### Plot
+
+plot(lin_obj)
+
+### The vector of residuals e_hat
+
+resid(lin_obj)
+
+
+### The predicted values y_hat
+
+pred(lin_obj)
+
+
+### The coefficients as a named vector.
+
+coef(lin_obj)
+
+### Present the coefficients with their standard error, t-value and p-value as well as the estimate of σ_hat and the degrees of freedom
+
+summary(lin_obj)
