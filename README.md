@@ -25,28 +25,28 @@ lin_obj <- linreg(Petal.Length ~ Sepal.Width + Sepal.Length, data = iris)
 
 ## 1.4 Run the linreg() function
 
-### 1.4.1 Print out the coefficients and coefficient names
+### 1.4.1 Print out the coefficients and coefficient names:
 
 print(lin_obj)
 
-### 1.4.2 Plot
+### 1.4.2 Plot:
 
 plot(lin_obj)
 
-### 1.4.3 The vector of residuals e_hat
+### 1.4.3 The vector of residuals e_hat:
 
 resid(lin_obj)
 
 
-### 1.4.4 The predicted values y_hat
+### 1.4.4 The predicted values y_hat:
 
 pred(lin_obj)
 
 
-### 1.4.5 The coefficients as a named vector.
+### 1.4.5 The coefficients as a named vector:
 
 coef(lin_obj)
 
-### 1.4.6 Present the coefficients with their standard error, t-value and p-value as well as the estimate of σ_hat and the degrees of freedom
+### 1.4.6 Present the coefficients with their standard error, t-value and p-value as well as the estimate of σ_hat and the degrees of freedom:
 
 summary(lin_obj)
