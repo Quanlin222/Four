@@ -138,7 +138,7 @@ plot.linreg <- function(x, ...) {
   p1 <- ggplot2::ggplot(plot_data, ggplot2::aes(x = Fitted, y = Residuals)) +
     ggplot2::geom_point() +
     ggplot2::geom_hline(yintercept = median_residuals, linetype = "dashed", color = "blue") +
-    ggplot2::geom_line(color = "red", linewidth = 0.5) +
+    ggplot2::geom_smooth(method = "lm", formula = y ~ x, color = "red", se = FALSE) +  # 明确公式
     ggplot2::labs(title = "Residuals vs Fitted", x = "Fitted values", y = "Residuals") +
     ggplot2::theme_bw()
 
@@ -148,10 +148,9 @@ plot.linreg <- function(x, ...) {
 
   p2 <- ggplot2::ggplot(plot_data, ggplot2::aes(x = Fitted, y = Std_Residuals)) +
     ggplot2::geom_point() +
-    ggplot2::geom_line(color = "red", linewidth = 0.5)  +
+    ggplot2::geom_smooth(method = "lm", formula = y ~ x, color = "red", se = FALSE) +  # 明确公式
     ggplot2::labs(title = "Scale-Location", x = "Fitted values", y = expression(sqrt(abs(Standardized~Residuals)))) +
     ggplot2::theme_bw()
-
 
   # Combine plots
   gridExtra::grid.arrange(p1, p2, ncol = 1)
@@ -174,7 +173,7 @@ resid.linreg <- function(x,...) {
 }
 
 pred <- function(x,...) {
-  UseMethod("pred", x)
+  UseMethod("pred")
 }
 
 #' Predicted values method for linreg objects

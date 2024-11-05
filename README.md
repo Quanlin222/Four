@@ -21,7 +21,7 @@ library(Four)
 
 data(iris)
 
-lin_obj <- linreg(Petal.Length ~ Sepal.Width + Sepal.Length, data = iris)
+lin_obj <- linreg(Petal.Length~Species, data = iris)
 
 ## 1.4 Run the linreg() function
 
