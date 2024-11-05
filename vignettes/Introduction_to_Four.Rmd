@@ -31,7 +31,7 @@ library(Four)
 
 ```r
 data(iris)
-lin_obj <- linreg(Petal.Length ~ Sepal.Width + Sepal.Length, data = iris)
+lin_obj <- linreg(Petal.Length~Species, data = iris)
 ```
 
 ## Perform linear regression
