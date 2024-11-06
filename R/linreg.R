@@ -193,8 +193,8 @@ pred <- function(object, ...) {
 #' @param ... Additional arguments
 #' @export
 #' @method pred linreg
-pred.linreg <- function(x,...){
-  return(x$fitted_values)
+pred.linreg <- function(object,...){
+  return(object$fitted_values)
 }
 
 #' Coefficients method for linreg objects
