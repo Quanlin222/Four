@@ -89,7 +89,7 @@ linreg <- function(formula, data) {
   return(result)
 }
 
-utils::globalVariables(c("Fitted", "Residuals", "Std_Residuals"))
+# utils::globalVariables(c("Fitted", "Residuals", "Std_Residuals"))
 
 # S3 print method for linreg class
 #' Print method for linreg objects
@@ -116,7 +116,7 @@ print.linreg <- function(x, ...) {
   }
 }
 
-plot <- function(x,...) {
+plot <- function(object,...) {
   UseMethod("plot")
 }
 #' Plot method for linreg objects
@@ -126,10 +126,10 @@ plot <- function(x,...) {
 #' @param x A linreg object.
 #' @param ... Additional arguments (not used).
 #' @export
-plot.linreg <- function(x, ...) {
+plot.linreg <- function(object, ...) {
   # Extract data
-  y_hat <- as.vector(x$fitted_values)
-  e_hat <- as.vector(x$residuals)
+  y_hat <- as.vector(object$fitted_values)
+  e_hat <- as.vector(object$residuals)
   
   if (any(is.na(y_hat)) || any(is.na(e_hat))) {
     stop("Fitted values or residuals contain NA values.")
@@ -183,7 +183,7 @@ resid.linreg <- function(x,...) {
   return(x$residuals)
 }
 
-pred <- function(x,...) {
+pred <- function(object,...) {
   UseMethod("pred")
 }
 
@@ -195,8 +195,8 @@ pred <- function(x,...) {
 #' @param ... Additional arguments (not used).
 #' @return A vector of predicted values.
 #' @export
-pred.linreg <- function(x,...) {
-  return(x$fitted_values)
+pred.linreg <- function(object,...) {
+  return(object$fitted_values)
 }
 
 #' Coefficients method for linreg objects
