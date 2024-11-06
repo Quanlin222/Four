@@ -124,8 +124,8 @@ plot <- function(x,...) {
 #' @export
 plot.linreg <- function(x, ...) {
   # Extract data
-  y_hat <- x$fitted_values
-  e_hat <- x$residuals
+  y_hat <- as.vector(x$fitted_values)
+  e_hat <- as.vector(x$residuals)
 
 
   # Create a data frame for plotting
@@ -184,7 +184,7 @@ pred <- function(x,...) {
 #' @param ... Additional arguments (not used).
 #' @return A vector of predicted values.
 #' @export
-pred.linreg <- function(x,...) {
+pred.linreg <- function(x,...){
   return(x$fitted_values)
 }
 
