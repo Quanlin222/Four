@@ -17,55 +17,57 @@
 #' @export
 #' @importFrom stats median model.matrix sd
 linreg <- function(formula, data) {
-
+  
   if(!is.data.frame(data)){
     stop()
   }
-
+  
   if(!inherits(formula, "formula")){
     stop()
   }
-
+  
   # Create the design matrix X
   X <- model.matrix(formula, data)
-
+  
   # Pick out the dependent variable y
   y_var <- all.vars(formula)[1]
   y <- data[[y_var]]
-
-  # Perform QR decomposition of X
-  qr_decomp <- qr(X)
-  Q <- qr.Q(qr_decomp)
-  R <- qr.R(qr_decomp)
-
-  # Calculate the regression coefficients
-  beta_hat <- solve(R) %*% t(Q) %*% y
+  
+  beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
   names(beta_hat) <- colnames(X)
-
+  
   # Calculate the fitted values
   y_hat <- X %*% beta_hat
-
+  
   # Calculate the residuals
   e_hat <- y - y_hat
-
+  
   # Calculate degrees of freedom
   n <- nrow(X)  # Sample size
   p <- ncol(X)  # Number of parameters
   df <- n - p   # Degrees of freedom
-
+  
   # Calculate the residual variance
   sigma_hat_squared <- sum(e_hat^2) / df
-
-  # Calculate the variance of the regression coefficients
-  R_inv <- solve(R)
-  var_beta <- sigma_hat_squared * R_inv %*% t(R_inv)
-
+  
+  var_beta <- sigma_hat_squared * solve(t(X) %*% X)
+  
   # Calculate the t-values for each coefficient
   t_values <- beta_hat / sqrt(diag(var_beta))
-
+  
   # Calculate the p-values for each coefficient
   p_values <- 2 * stats::pt(abs(t_values), df = df, lower.tail = FALSE)
-
+  
+  # Perform QR decomposition of X
+  qr_decomp <- qr(X)
+  Q <- qr.Q(qr_decomp)
+  R <- qr.R(qr_decomp)
+  R_inv <- solve(R)
+  
+  # Calculate the regression coefficients
+  beta_hat_QR <- solve(R) %*% t(Q) %*% y
+  var_beta_hat_QR <- sigma_hat_squared * R_inv %*% t(R_inv)
+  
   # Create a list to store results
   result <- list(
     coefficients = beta_hat,
@@ -76,12 +78,14 @@ linreg <- function(formula, data) {
     variance_coefficients = var_beta,
     t_values = t_values,
     p_values = p_values,
+    coefficients_QR  = beta_hat_QR,#QR
+    variance_coefficients_QR  = var_beta_hat_QR,#QR
     actual_values = y,
     call = match.call()
   )
   # Set the class of the result to 'linreg'
   class(result) <- "linreg"
-
+  
   return(result)
 }
 
@@ -100,9 +104,9 @@ print.linreg <- function(x, ...) {
   cat(deparse(x$call), "\n")  # Output the model's call information
   cat("\n")
   cat("Coefficients:\n")
-
+  
   # Format the coefficients for output
-
+  
   for(i in seq_along(x$coefficients)){
     cat(sprintf("%20s", names(x$coefficients)[i]))
   }
@@ -126,14 +130,14 @@ plot.linreg <- function(x, ...) {
   # Extract data
   y_hat <- as.vector(x$fitted_values)
   e_hat <- as.vector(x$residuals)
-
-
+  
+  
   # Create a data frame for plotting
   plot_data <- data.frame(Fitted = y_hat, Residuals = e_hat)
-
+  
   # Calculate the median of residuals
   median_residuals <- median(e_hat)
-
+  
   # Residuals vs Fitted
   p1 <- ggplot2::ggplot(plot_data, ggplot2::aes(x = Fitted, y = Residuals)) +
     ggplot2::geom_point() +
@@ -141,17 +145,17 @@ plot.linreg <- function(x, ...) {
     ggplot2::geom_smooth(method = "lm", formula = y ~ x, color = "red", se = FALSE) +  # 明确公式
     ggplot2::labs(title = "Residuals vs Fitted", x = "Fitted values", y = "Residuals") +
     ggplot2::theme_bw()
-
+  
   # Scale-Location plot (sqrt of standardized residuals)
   standardized_residuals <- e_hat / sd(e_hat)
   plot_data$Std_Residuals <- sqrt(abs(standardized_residuals))
-
+  
   p2 <- ggplot2::ggplot(plot_data, ggplot2::aes(x = Fitted, y = Std_Residuals)) +
     ggplot2::geom_point() +
     ggplot2::geom_smooth(method = "lm", formula = y ~ x, color = "red", se = FALSE) +  # 明确公式
     ggplot2::labs(title = "Scale-Location", x = "Fitted values", y = expression(sqrt(abs(Standardized~Residuals)))) +
     ggplot2::theme_bw()
-
+  
   # Combine plots
   gridExtra::grid.arrange(p1, p2, ncol = 1)
 }
@@ -184,7 +188,7 @@ pred <- function(x,...) {
 #' @param ... Additional arguments (not used).
 #' @return A vector of predicted values.
 #' @export
-pred.linreg <- function(x,...){
+pred.linreg <- function(x,...) {
   return(x$fitted_values)
 }
 
@@ -215,18 +219,18 @@ summary <- function(x,...) {
 summary.linreg <- function(x,...) {
   cat("Call:\n")
   cat(deparse(x$call), "\n\n")
-
+  
   # Extract coefficients and their statistics
   coefs <- x$coefficients
   se <- sqrt(diag(x$variance_coefficients))
   t_values <- x$t_values
   p_values <- x$p_values
-
+  
   # Add significance stars based on p-values
   signif_codes <- ifelse(p_values < 0.001, "***",
                          ifelse(p_values < 0.01, "**",
                                 ifelse(p_values < 0.05, "*", "")))
-
+  
   # Create a data frame for better formatting
   summary_table <- data.frame(
     Estimate = coefs,
@@ -236,12 +240,11 @@ summary.linreg <- function(x,...) {
     Signif = signif_codes,
     check.names = FALSE  # To handle spaces in column names
   )
-
+  
   # Print table with appropriate alignment
   print(format(summary_table, digits = 5, justify = "right"), row.names = TRUE)
-
+  
   # Combine Residual standard error and Degrees of freedom on one line
   cat(sprintf("\nResidual standard error: %.5f on %d degrees of freedom\n",
               sqrt(x$residual_variance), x$degrees_of_freedom))
 }
-
