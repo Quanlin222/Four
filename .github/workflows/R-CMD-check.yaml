@@ -46,6 +46,11 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      # New step: Install devtools and any other dependencies
+      - name: Install devtools
+        run: |
+          install.packages("devtools")
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
