@@ -179,17 +179,20 @@ resid.linreg <- function(x,...) {
   return(x$residuals)
 }
 
-pred <- function(x,...) {
+#' Predict values from a model
+#'
+#' @param object Model object
+#' @param ... Additional arguments
+#' @export
+pred <- function(object, ...) {
   UseMethod("pred")
 }
-#' Predicted values method for linreg objects
+#' Predict method for linreg class
 #'
-#' This method returns the predicted values from a linreg object.
-#'
-#' @param x A linreg object.
-#' @param ... Additional arguments (not used).
-#' @return A vector of predicted values.
+#' @param object An object of class linreg
+#' @param ... Additional arguments
 #' @export
+#' @method pred linreg
 pred.linreg <- function(x,...){
   return(x$fitted_values)
 }
@@ -250,4 +253,3 @@ summary.linreg <- function(x,...) {
   cat(sprintf("\nResidual standard error: %.5f on %d degrees of freedom\n",
               sqrt(x$residual_variance), x$degrees_of_freedom))
 }
-15:13 

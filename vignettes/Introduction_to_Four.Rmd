@@ -24,9 +24,6 @@ We also implement an object oriented system to handle special functions such as 
 
 ```{r}
 devtools::install_github("Quanlin222/Four")
-
-library(ggplot2)
-
 library(Four)
 ```
 
@@ -45,9 +42,9 @@ lin_obj <- linreg(Petal.Length~Species, data = iris)
 print(lin_obj)
 ```
 ## Plot
-
+```{r}
 plot(lin_obj)
-
+```
 
 ## The vector of residuals e_hat
 ```{r}

@@ -2,18 +2,15 @@
 % Please edit documentation in R/linreg.R
 \name{pred.linreg}
 \alias{pred.linreg}
-\title{Predicted values method for linreg objects}
+\title{Predict method for linreg class}
 \usage{
 \method{pred}{linreg}(x, ...)
 }
 \arguments{
-\item{x}{A linreg object.}
+\item{...}{Additional arguments}
 
-\item{...}{Additional arguments (not used).}
-}
-\value{
-A vector of predicted values.
+\item{object}{An object of class linreg}
 }
 \description{
-This method returns the predicted values from a linreg object.
+Predict method for linreg class
 }
