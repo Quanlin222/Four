@@ -21,47 +21,47 @@ We use the QR decomposition to create the most basic functionality in the R pack
 We also implement an object oriented system to handle special functions such as print(), plot(), resid(), pred(), coef() and summary().
 
 # Installing and Loading the Package
+{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 
-```{r}
+```{r setup}
 devtools::install_github("Quanlin222/Four")
 library(Four)
 ```
 
 # Load data
 
-```{r}
+```{r example}
 data(iris)
 lin_obj <- linreg(Petal.Length~Species, data = iris)
-```
+
 
 # Perform linear regression
 
 ## Print out the coefficients and coefficient names
 
-```{r}
 print(lin_obj)
-```
+
 ## Plot
-```{r}
+
 plot(lin_obj)
-```
 
 ## The vector of residuals e_hat
-```{r}
+
 resid(lin_obj)
-```
 
 ## The predicted values y_hat
-```{r}
+
 pred(lin_obj)
-```
 
 ## The coefficients as a named vector.
-```{r}
+
 coef(lin_obj)
-```
 ## Present the coefficients with their standard error, t-value and p-value as well as the estimate of σ_hat and the degrees of freedom
 
-```{r}
+
 summary(lin_obj)
 ```
