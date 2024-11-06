@@ -33,7 +33,13 @@ linreg <- function(formula, data) {
   y_var <- all.vars(formula)[1]
   y <- data[[y_var]]
   
-  beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
+  # Perform QR decomposition of X
+  qr_decomp <- qr(X)
+  Q <- qr.Q(qr_decomp)
+  R <- qr.R(qr_decomp)
+  
+  # Calculate the regression coefficients
+  beta_hat <- solve(R) %*% t(Q) %*% y
   names(beta_hat) <- colnames(X)
   
   # Calculate the fitted values
@@ -50,23 +56,15 @@ linreg <- function(formula, data) {
   # Calculate the residual variance
   sigma_hat_squared <- sum(e_hat^2) / df
   
-  var_beta <- sigma_hat_squared * solve(t(X) %*% X)
+  # Calculate the variance of the regression coefficients
+  R_inv <- solve(R)
+  var_beta <- sigma_hat_squared * R_inv %*% t(R_inv)
   
   # Calculate the t-values for each coefficient
   t_values <- beta_hat / sqrt(diag(var_beta))
   
   # Calculate the p-values for each coefficient
   p_values <- 2 * stats::pt(abs(t_values), df = df, lower.tail = FALSE)
-  
-  # Perform QR decomposition of X
-  qr_decomp <- qr(X)
-  Q <- qr.Q(qr_decomp)
-  R <- qr.R(qr_decomp)
-  R_inv <- solve(R)
-  
-  # Calculate the regression coefficients
-  beta_hat_QR <- solve(R) %*% t(Q) %*% y
-  var_beta_hat_QR <- sigma_hat_squared * R_inv %*% t(R_inv)
   
   # Create a list to store results
   result <- list(
@@ -78,8 +76,6 @@ linreg <- function(formula, data) {
     variance_coefficients = var_beta,
     t_values = t_values,
     p_values = p_values,
-    coefficients_QR  = beta_hat_QR,#QR
-    variance_coefficients_QR  = var_beta_hat_QR,#QR
     actual_values = y,
     call = match.call()
   )
@@ -89,7 +85,7 @@ linreg <- function(formula, data) {
   return(result)
 }
 
-# utils::globalVariables(c("Fitted", "Residuals", "Std_Residuals"))
+utils::globalVariables(c("Fitted", "Residuals", "Std_Residuals"))
 
 # S3 print method for linreg class
 #' Print method for linreg objects
@@ -116,7 +112,7 @@ print.linreg <- function(x, ...) {
   }
 }
 
-plot <- function(object,...) {
+plot <- function(x,...) {
   UseMethod("plot")
 }
 #' Plot method for linreg objects
@@ -126,21 +122,14 @@ plot <- function(object,...) {
 #' @param x A linreg object.
 #' @param ... Additional arguments (not used).
 #' @export
-plot.linreg <- function(object, ...) {
+plot.linreg <- function(x, ...) {
   # Extract data
-  y_hat <- as.vector(object$fitted_values)
-  e_hat <- as.vector(object$residuals)
+  y_hat <- as.vector(x$fitted_values)
+  e_hat <- as.vector(x$residuals)
   
-  if (any(is.na(y_hat)) || any(is.na(e_hat))) {
-    stop("Fitted values or residuals contain NA values.")
-  }
   
   # Create a data frame for plotting
   plot_data <- data.frame(Fitted = y_hat, Residuals = e_hat)
-  
-  if (any(is.na(plot_data$Fitted)) || any(is.na(plot_data$Residuals))) {
-    stop("Fitted values or residuals contain NA values.")
-  }
   
   # Calculate the median of residuals
   median_residuals <- median(e_hat)
@@ -183,7 +172,7 @@ resid.linreg <- function(x,...) {
   return(x$residuals)
 }
 
-pred <- function(object,...) {
+pred <- function(x,...) {
   UseMethod("pred")
 }
 
@@ -195,8 +184,8 @@ pred <- function(object,...) {
 #' @param ... Additional arguments (not used).
 #' @return A vector of predicted values.
 #' @export
-pred.linreg <- function(object,...) {
-  return(object$fitted_values)
+pred.linreg <- function(x,...){
+  return(x$fitted_values)
 }
 
 #' Coefficients method for linreg objects
@@ -255,3 +244,4 @@ summary.linreg <- function(x,...) {
   cat(sprintf("\nResidual standard error: %.5f on %d degrees of freedom\n",
               sqrt(x$residual_variance), x$degrees_of_freedom))
 }
+15:13 
