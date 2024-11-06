@@ -52,9 +52,9 @@ resid(lin_obj)
 ```
 
 ## The predicted values y_hat
-
+```{r}
 pred(lin_obj)
-
+```
 
 ## The coefficients as a named vector.
 ```{r}
@@ -62,4 +62,6 @@ coef(lin_obj)
 ```
 ## Present the coefficients with their standard error, t-value and p-value as well as the estimate of σ_hat and the degrees of freedom
 
+```{r}
 summary(lin_obj)
+```
