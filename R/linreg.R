@@ -112,9 +112,7 @@ print.linreg <- function(x, ...) {
   }
 }
 
-plot <- function(x,...) {
-  UseMethod("plot")
-}
+
 #' Plot method for linreg objects
 #'
 #' This method plots the diagnostic plots for linreg objects.
@@ -184,7 +182,6 @@ resid.linreg <- function(x,...) {
 pred <- function(x,...) {
   UseMethod("pred")
 }
-
 #' Predicted values method for linreg objects
 #'
 #' This method returns the predicted values from a linreg object.
