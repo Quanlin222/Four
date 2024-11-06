@@ -127,9 +127,18 @@ plot.linreg <- function(x, ...) {
   y_hat <- as.vector(x$fitted_values)
   e_hat <- as.vector(x$residuals)
   
+  if (any(is.na(y_hat)) || any(is.na(e_hat))) {
+    stop("Fitted values or residuals contain NA values.")
+  }
   
   # Create a data frame for plotting
   plot_data <- data.frame(Fitted = y_hat, Residuals = e_hat)
+  
+  if (!all(c("Fitted", "Residuals") %in% names(plot_data))) {
+    stop("plot_data must contain columns 'Fitted' and 'Residuals'.")
+  }
+  
+  str(plot_data)
   
   # Calculate the median of residuals
   median_residuals <- median(e_hat)
