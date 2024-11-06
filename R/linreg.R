@@ -136,7 +136,6 @@ plot.linreg <- function(x, ...) {
     stop("plot_data must contain columns 'Fitted' and 'Residuals'.")
   }
   
-  str(plot_data)
   
   # Calculate the median of residuals
   median_residuals <- median(e_hat)

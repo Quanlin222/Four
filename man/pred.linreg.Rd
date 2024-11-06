@@ -4,12 +4,12 @@
 \alias{pred.linreg}
 \title{Predict method for linreg class}
 \usage{
-\method{pred}{linreg}(x, ...)
+\method{pred}{linreg}(object, ...)
 }
 \arguments{
-\item{...}{Additional arguments}
-
 \item{object}{An object of class linreg}
+
+\item{...}{Additional arguments}
 }
 \description{
 Predict method for linreg class
